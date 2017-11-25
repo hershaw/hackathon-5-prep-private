@@ -12,12 +12,12 @@ from django.http import HttpResponseRedirect
 from .models import Team, Submission, SubmissionLimit
 from .forms import HackathonSubmissionForm
 
-import sklearn.preprocessing.LabelEncoder
-import sklearn.metrics.f1_score as f1_score
+from sklearn import preprocessing
+from sklearn import metrics
 
 y_true_df  = pd.read_csv('./y_true.csv', encoding='utf8')
 
-le = LabelEncoder()
+le = preprocessing.LabelEncoder()
 le.fit(y_true_df['newsgroup'].values)
 
 y_true = le.transform(y_true_df['newsgroup'].values)
@@ -94,10 +94,10 @@ def _grade_submission(y_pred):
         msg = 'Submission has incorrect shape. Given {}, expected {}'
         raise RuntimeError(msg.format(y_pred.shape, y_true.shape))
 
-    for index, entry in enumerate(y_pred['newsgroup'].values):
-        assert_valid(index, entry)
+    #for index, entry in enumerate(y_pred['newsgroup'].values):
+    #    assert_valid(index, entry)
 
-    return f1_score(y_true, y_pred)
+    return metrics.f1_score(y_true, y_pred, average='macro')
 
 
 def assert_valid(index, entry):
